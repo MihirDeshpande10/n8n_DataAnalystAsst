@@ -1,0 +1,192 @@
+{
+  "name": "My workflow 3",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hi there! 👋\nI am your Assistant Data Analyst, how can I help you?",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "6431aecc-9b6c-4129-9f12-89340ea0bc96",
+      "name": "When chat message received",
+      "webhookId": "5a25275a-9669-47af-8d12-60697f36b7d8"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are an AI Data Analyst Agent.\n\nYou work with a sales dataset having these columns:\norder_id, order_date, city, category, revenue, cost.\n\nRules:\n1. Never ask follow-up questions.\n2. Always produce a FINAL answer ready to be emailed.\n3. Use the subject: \"High-Level Sales Insights\".\n4. Format the response clearly using sections and bullet points.\n5. Use Indian number formatting (no currency symbol).\n6. Keep insights concise, professional, and executive-friendly.\n7. Do not hallucinate numbers or assumptions.\n\nOutput format STRICTLY:\n\nSales Performance Summary\n\nOverall Performance\n- Total Revenue: <value>\n- Total Cost: <value>\n- Total Profit: <value>\n\nCity-wise Performance\n- City: Revenue | Profit\n- City: Revenue | Profit\n\nCategory-wise Performance\n- Category: Revenue | Profit\n\nKey Insights\n- Insight 1\n- Insight 2\n- Insight 3\n\nRecommendations\n- Recommendation 1\n- Recommendation 2\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "46c07dab-8c6b-4b35-9657-0b5f59e8d1f1",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        224,
+        304
+      ],
+      "id": "a2989c59-84d1-428b-8f18-1b1b3acd26ae",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1wanuzSfDx9EO_Xsthfji0mKmNAkBiiODYAjtvvuW2mI",
+          "mode": "list",
+          "cachedResultName": "ai_agent_sales_data_100",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wanuzSfDx9EO_Xsthfji0mKmNAkBiiODYAjtvvuW2mI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 480468607,
+          "mode": "list",
+          "cachedResultName": "ai_agent_sales_data_100.csv",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wanuzSfDx9EO_Xsthfji0mKmNAkBiiODYAjtvvuW2mI/edit#gid=480468607"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        416,
+        256
+      ],
+      "id": "dfab9f44-03f2-4f6c-85b9-4fad99ecede3",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "xP23WUBUAik6H8Kb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "mihirdeshpande102@gmail.com",
+        "subject": "Hello, Here is your analysis",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        592,
+        112
+      ],
+      "id": "34261df0-3629-45e3-b1ae-e2d5eef2612d",
+      "name": "Send a message in Gmail",
+      "webhookId": "c6c6a552-0e43-42e6-ad1d-3cbfdee66398",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "frgM4EkCvTwBz8JC",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        80,
+        208
+      ],
+      "id": "5ac3c9f8-63e0-4edc-8a8c-59cd21690ac6",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "dwfdJBoJfHwHSpXD",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "7b032868-03ab-41fa-a642-8651a67539b0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fc92986220f8a5b1e3e8a355b84d202eae3c137ed9f49e9cc2c38e61f20486a4"
+  },
+  "id": "2ENjfAQlMmUm3taK",
+  "tags": []
+}
